@@ -1,8 +1,7 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button, Modal, Box, Typography } from '@mui/material'; // 导入Modal组件
-import './book.css';
 import React from 'react';
-
+import { Link } from 'react-router-dom';
 interface Book {
   id: number;
   title: string;
@@ -10,24 +9,22 @@ interface Book {
   price: number;
 }  
 const fetchData=async()=>{
-  const response =await fetch('http://localhost:5000/books');
+  const response =await fetch('http://localhost:5000/cart');
   if(!response.ok){
     throw new Error('QAQ');
   }
   return response.json();
 }
-
-function Book() {
+function Cart() {
   const [open, setOpen] = React.useState(false); // 控制Modal显示状态
   const [selectedBook, setSelectedBook] = React.useState<Book | null>(null); // 保存选中的书籍
+  const queryClient = useQueryClient(); 
   const { data, isLoading, error } = useQuery<Book[]>({
-    queryKey: ['books'],
+    queryKey: ['cart'],
     queryFn: () => fetchData(),
   });
-  if (isLoading) return <div>书本正在来的路上~</div>;
+  if (isLoading) return <div>购物车正在来的路上~</div>;
   if (error) return <div>发生了一点点状况QAQ</div>;
-  
-  
   const handleOpen = (book: Book) => {
     setOpen(true);
     setSelectedBook(book);
@@ -37,32 +34,36 @@ function Book() {
     setOpen(false);
     setSelectedBook(null);
   };
-  const addToCart = async (book:Book) => {
-    let ID = book.id;
-    let Title = book.title;
-    let Author = book.author;
-    let Price = book.price;
-    const response = await fetch(`http://localhost:5000/cart/`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({id:ID,title:Title,author:Author,price:Price}) 
-    })
-    if(!response.ok){
-      throw new Error('QAQ');
+  const Deletebook = async (book: Book) => {
+    const response = await fetch(`http://localhost:5000/cart/${book.id}`, {
+        method: 'DELETE'
+      });
+      await queryClient.invalidateQueries({ queryKey: ['cart'] }); 
+      console.log('Book removed from cart.');
+      if(!response.ok){
+        throw new Error('QAQ');
+      }
+      return response.json();
     }
-    return response.json();
-  };
+const One=data?.map((book)=>book.price);
+const Total=(One?.reduce((a, b) => a + b,0))?.toFixed(2)||0;
+const Num=One?.length||0;
   return (
     <>
+    <div className='cartlist'>
+      <p>{Num}本</p>
+      <p>总价:{Total}</p>
+      <Link to="/ABC">
+      <Button variant="contained" onClick={()=>alert(Total+'元')}>购买</Button>
+      </Link>
+      </div>
     <div className='book-list'>
       {data?.map((book) => (
         <div key={book.id} className='book'>
           <h3 className='book-title' onClick={() => handleOpen(book)}>{book.title}</h3>
           <p className='book-author'>--{book.author}</p>
           <p className='book-price'>{book.price}元</p>
-          <Button variant="contained" onClick={() => addToCart(book)}>加入购物车</Button>
+          <Button variant="contained" onClick={() => Deletebook(book)}>移出购物车</Button>
         </div>
       ))}
     </div>
@@ -91,4 +92,4 @@ function Book() {
    </>
     
   );}
-export default Book;
+export default Cart;

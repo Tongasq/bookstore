@@ -1,9 +1,13 @@
-h1{
-  display: flex;
-  color: black;
-  position: relative;
-
+.p2{
+    color: blue;
+    font-size: 50px;
 }
-.zhong{
-  margin: 0 auto;
+.h11{
+
+    font-size: 90px;
+}
+.p1{
+   
+    color: rgb(240, 21, 21);
+    font-size: 50px;
 }

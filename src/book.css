@@ -1,0 +1,44 @@
+.book-list {
+    display: grid;
+    grid-template-columns: repeat(4, 350px); 
+    gap: 20px;
+    padding: 30px;
+  }
+.cartlist {
+    border: 6px solid #426ebe;
+    padding: 10px;
+    text-align: center;
+    background-color: #ffffff;
+    color: #c00; /* 更醒目的价格颜色 */
+    font-size: larger;
+  }
+.book:hover {
+    transform: translateY(-5px); /* 悬停时向上移动 */
+}
+.book-title:hover {
+    cursor: pointer;
+    color:blue; /* 更深的标题颜色 */
+    text-decoration-line: underline;
+  }
+.book {
+    border: 6px solid #426ebe;
+    padding: 10px;
+    text-align: center; /* 文字居中 */
+}
+.book-title {
+    color: #333; /* 更深的标题颜色 */
+    font-weight: bolder;
+    margin-top: 5px;
+}
+
+.book-author {
+    color: #666; /* 更柔和的作者颜色 */
+}
+
+.book-price {
+    color: #c00; /* 更醒目的价格颜色 */
+    font-weight: bold;
+}
+.img{
+    width: 600px;
+}
